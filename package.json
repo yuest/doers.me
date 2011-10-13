@@ -9,6 +9,8 @@
       , "dot": "0.1.6"
       , "less": "1.1.4"
       , "connect-less": "0.1.0"
+      , "underscore": ">=1.1.2"
+      , "backbone": "0.5.3"
       , "switchman": "https://github.com/yuest/switchman/tarball/v0.0.2"
       , "quip": "https://github.com/yuest/quip/tarball/v0.0.2-2"
     }
