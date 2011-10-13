@@ -1,0 +1,101 @@
+/*
+    Developed by anthonyvscode.com
+    This solution is to be used in the dotless implemention of less css: http://www.dotlesscss.org/
+*/
+/*Border Radius Functions*/
+/*Shadows*/
+/*Transformations*/
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  font-size: 12px;
+  font-family: tahoma, arial, sans;
+}
+.project {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  -moz-border-radius: 6px 6px 4px 4px;
+  -webkit-border-radius: 6px 6px 4px 4px;
+  border-radius: 6px 6px 4px 4px;
+  background-color: #d8ccb2;
+  padding: 3px;
+  color: #fff;
+  min-width: 200px;
+}
+.project h1 {
+  font-size: 16px;
+  line-height: 2em;
+}
+.project ul {
+  list-style: none;
+  margin-left: 20px;
+  background-color: #fff;
+  color: #999;
+  position: relative;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.project ul li {
+  padding: 3px 0 3px 3px;
+  line-height: 1.8em;
+  border-bottom: #d8ccb2 1px dashed;
+}
+.project ul ul li:last-child {
+  border-bottom: 0 none;
+}
+.project > ul {
+  margin-left: 0;
+  padding-bottom: 20px;
+}
+.project ul li s,
+.project ul li b,
+.project ul li i,
+.project ul li u {
+  display: block;
+  overflow: hidden;
+  background: url(/i/sprites.png) no-repeat 0 0;
+  height: 30px;
+  width: 30px;
+}
+.project ul li u {
+  cursor: pointer;
+}
+.project ul li u.done, .project ul li u:hover {
+  background-position: 0 -90px;
+}
+.project ul li u:hover {
+  background-position: 0 -120px;
+}
+.project ul li s {
+  cursor: pointer;
+  background-position: 0 -150px;
+}
+.project ul li s.selected {
+  background-position: 0 -180px;
+}
+.project ul li i {
+  background-position: 0 -210px;
+}
+.project ul li i.active {
+  background-position: 0 -240px;
+}
+.project.focused {
+  left: 400px;
+  background-color: #933;
+}
+.project.focused ul {
+  color: #333;
+}
+.project.focused ul li {
+  border-bottom: #933 1px dashed;
+}
+.project.focused u.done, .project.focused u:hover {
+  background-position: 0 -30px;
+}
+.project.focused u:hover {
+  background-position: 0 -60px;
+}

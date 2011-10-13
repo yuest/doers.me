@@ -64,6 +64,7 @@ connect(
     ,connect.session({ secret: S.secret })
     ,urlRules
 ).listen(10086);
+console.log('Server started.');
 
 urlRules.add({
     '/': function ( req, res, next ) {
