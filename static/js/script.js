@@ -142,7 +142,7 @@ jQuery( function ( $ ) {
 
     $(document).on('click', function ( ev ) {
         if (/html/i.test( ev.target.tagName )) {
-            new Task( null, { left: ev.pageX-6, top: ev.pageY-8, viewType: 'project'});
+            new Task( null, { left: ev.pageX-6, top: ev.pageY-16, viewType: 'project'});
         }
     });
 

@@ -3,6 +3,7 @@ var connect = require('connect')
     ,connectLess = require('connect-less')
     ,switchman = require('switchman')
     ,quip = require('quip')
+    ,everyauth = require('everyauth')
     ,fs = require('fs')
     ,dot = require('dot')
     ,util = require('util')
@@ -45,6 +46,35 @@ var T = (function () {
     };
 }());
 
+everyauth.everymodule.logoutPath('/signout');
+everyauth.everymodule.moduleTimeout(30000);
+
+everyauth.google
+    .entryPath('/auth/google')
+    .callbackPath('/auth/google/callback')
+    .appId('402025418712.apps.googleusercontent.com')
+    .appSecret('nEvNLEuLqTGo3h')
+    .scope('https://www.googleapis.com/auth/tasks') // What you want access to
+    //.handleAuthCallbackError( function (req, res) {
+        // If a user denies your app, Google will redirect the user to
+        // /auth/facebook/callback?error=access_denied
+        // This configurable route handler defines how you want to respond to
+        // that.
+        // If you do not configure this, everyauth renders a default fallback
+        // view notifying the user that their authentication failed and why.
+    //})
+    .findOrCreateUser( function (session, accessToken, accessTokenExtra, googleUserMetadata) {
+        console.log( session );
+        console.log( accessToken );
+        console.log( accessTokenExtra );
+        console.log( googleUserMetadata );
+        // find or create user logic goes here
+        // Return a user or Promise that promises a user
+        // Promises are created via
+        //     var promise = this.Promise();
+    })
+    .redirectPath('/');
+
 connect(
     quip()
     ,function ( req, res, next ) {
@@ -59,9 +89,10 @@ connect(
     }
     ,connect.bodyParser()
     ,connect.cookieParser()
+    ,connect.session({ secret: S.secret })
+    ,everyauth.middleware()
     ,connectLess({ src: __dirname + '/static'})
     ,connectStatic( __dirname + '/static' )
-    ,connect.session({ secret: S.secret })
     ,urlRules
 ).listen(10086);
 console.log('Server started.');
