@@ -8,33 +8,35 @@ jQuery( function ( $ ) {
             ,parent: null
             ,children: null
         }
-    });
-
-    window.TaskList = Backbone.Collection.extend({
-        model: Task
-        ,comparator: function ( task ) {
-            return task.get('position');
+        ,initialize: function ( attributes, options ) {
+            var viewType = this.viewType = options && options.viewType || 'task';
+            if (viewType == 'task') {
+                this.view = new TaskView({ model: this }, true);
+            } else if (viewType == 'project') {
+                this.view = new ProjectView({ model: this }, options.left, options.top);
+            }
         }
     });
 
     window.TaskView = Backbone.View.extend({
         tagName: 'li'
         ,template: doT.template(' <u></u> <i></i> <s></s> <div class="text"> <span class="jTaskTitle" contenteditable>{{=it.title}}</span> </div> ')
-        ,initialize: function ( options ) {
-            var $elv = $( this.el );
-            console.log( this.model );
-            $elv.html( this.template( this.model.toJSON())).appendTo( $('>ul', this.model.get('parent').el ));
-            console.log( this.$('.jTaskTitle'));
-            this.$('.jTaskTitle').trigger('focus');
+        ,initialize: function ( options, autoFocus ) {
             this.model.view = this;
+            var $elv = $( this.el );
+            $elv.html( this.template( this.model.toJSON()));
+            if (autoFocus) {
+                this.$('.jTaskTitle').trigger('focus');
+            }
         }
     });
 
     window.ProjectView = Backbone.View.extend({
         tagName: 'section'
         ,className: 'project focused'
-        ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectTitle" contenteditable>{{=it.title}}</h1> <ul></ul> ')
+        ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectTitle" contenteditable>{{=it.title}}</h1> ')
         ,initialize: function ( options, left, top ) {
+            this.model.view = this;
             var $elv = $( this.el );
             if (left) {
                 $elv.css('left', left+'px');
@@ -44,11 +46,12 @@ jQuery( function ( $ ) {
             }
             $elv.html( this.template( this.model.toJSON())).appendTo('body');
             this.$('.jProjectTitle').trigger('focus');
-            this.model.bind('change:title', function( a, b ) {
-                console.log( a.changedAttributes() );
-                console.log( this );
-            }, this);
-            this.model.view = this;
+
+            var children = this.model.get('children');
+            if (!children) {
+                this.model.set({ children: (children = new TaskList( null, null, this.model ))});
+                children.add( new Task );
+            }
         }
         ,events: {
             'keydown .jProjectTitle': 'titleKeydown'
@@ -91,6 +94,42 @@ jQuery( function ( $ ) {
             }
         }
     });
+
+    window.TaskList = Backbone.Collection.extend({
+        model: Task
+        ,comparator: function ( task ) {
+            return task.get('position');
+        }
+        ,initialize: function ( models, options, parent ) {
+            if (parent && parent instanceof Task) {
+                this.parent = parent;
+            }
+            this.view = new TaskListView({ collection: this }, parent );
+            this.bind('add', function ( model ) {
+                if (this.parent && this.parent.view) {
+                    if (model.viewType != 'task') {
+                        model.view = new TaskView({ model: model });
+                    }
+                    $( model.view.el ).appendTo( this.view.el );
+                }
+            });
+        }
+    });
+
+    window.TaskListView = Backbone.View.extend({
+        tagName: 'ul'
+        ,initialize: function ( options, parent ) {
+            this.collection.view = this;
+            if (this.collection.parent) {
+                if (this.collection.parent.viewType == 'project') {
+                    $( this.el ).appendTo( parent.view.el );
+                } else if (this.collection.parent.viewType == 'task') {
+                    $( this.el ).after( parent.view.el );
+                }
+            }
+        }
+    });
+
     $(document).on('mousemove', function ( ev ) {
         if (!_mo) {
             return;
@@ -103,7 +142,7 @@ jQuery( function ( $ ) {
 
     $(document).on('click', function ( ev ) {
         if (/html/i.test( ev.target.tagName )) {
-            new ProjectView({ model: new Task() }, ev.pageX-6, ev.pageY-8 );
+            new Task( null, { left: ev.pageX-6, top: ev.pageY-8, viewType: 'project'});
         }
     });
 
@@ -111,13 +150,11 @@ jQuery( function ( $ ) {
     $('.project:eq(1)').css({ left: '700px' })
     .on('focus', '.jProjectTitle', function ( ev ) {
         var $el = $( this );
-        console.log( $el );
     })
     .on('keydown', '.jProjectTitle', function ( ev ) {
     })
     .on('blur', '.jProjectTitle', function ( ev ) {
         var $el = $( this );
-        console.log( $el );
     })
     .on('keydown', 'span[contenteditable]', function ( ev ) {
         var $el = $( this );
