@@ -1,5 +1,6 @@
 var connect = require('connect')
     ,connectStatic = connect['static']
+    ,connectLess = require('connect-less')
     ,switchman = require('switchman')
     ,quip = require('quip')
     ,fs = require('fs')
@@ -58,15 +59,20 @@ connect(
     }
     ,connect.bodyParser()
     ,connect.cookieParser()
+    ,connectLess({ src: __dirname + '/static'})
+    ,connectStatic( __dirname + '/static' )
     ,connect.session({ secret: S.secret })
     ,urlRules
 ).listen(10086);
 
 urlRules.add({
     '/': function ( req, res, next ) {
+        res.renderHtml('./views/dashboard.html');
+        /*
         M('post').find({ tag: 'trivial' }, { _id:1, author:1, topic:1, content:1 }, 0, 20).toArray( function ( err, topics ) {
             res.renderHtml('./views/index.html', { topics: topics });
         });
+        */
     }
     ,'/post/new': switchman.addSlash
     ,'/post/new/': {
