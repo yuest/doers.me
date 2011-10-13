@@ -12,8 +12,15 @@ jQuery( function ( $ ) {
         ,tagName: 'section'
         ,className: 'project focused'
         ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectName" contenteditable>{{=it.title}}</h1> <ul></ul> ')
-        ,initialize: function () {
-            $( this.el ).html( this.template( this.model.toJSON())).appendTo('body');
+        ,initialize: function ( options, left, top ) {
+            var $elv = $( this.el );
+            if (left) {
+                $elv.css('left', left+'px');
+            }
+            if (top) {
+                $elv.css('top', top+'px');
+            }
+            $elv.html( this.template( this.model.toJSON())).appendTo('body');
             this.$('.jProjectName').trigger('focus');
             this.model.bind('change:title', function( a, b ) {
                 console.log( a.changedAttributes() );
@@ -35,6 +42,10 @@ jQuery( function ( $ ) {
             };
         }
         ,titleBlur: function ( ev ) {
+            if (!this.$('.jProjectName').text().length) {
+                this.remove();
+                return false;
+            }
             this.model.set({'title': $( ev.currentTarget ).text()});
         }
         ,handlerMouseDown: function ( ev ) {
@@ -60,13 +71,12 @@ jQuery( function ( $ ) {
         });
     });
 
-    $('html').on('click', function ( ev ) {
+    $(document).on('click', function ( ev ) {
         if (/html/i.test( ev.target.tagName )) {
-            console.log('hello');
+            new ProjectView({ model: new Project() }, ev.pageX-6, ev.pageY-8 );
         }
     });
 
-    new ProjectView({model: new Project()});
     //$('.project:eq(0)').clone().addClass('focused').appendTo('body');
     $('.project:eq(1)').css({ left: '700px' })
     .on('focus', '.jProjectName', function ( ev ) {
