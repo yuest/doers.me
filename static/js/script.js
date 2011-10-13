@@ -1,12 +1,15 @@
 jQuery( function ( $ ) {
-    window.MList = Backbone.Model.extend({
+    var _mo; //moving object, a view object
+
+    window.Project = Backbone.Model.extend({
         defaults: {
             title: ''
         }
     });
 
-    window.VList = Backbone.View.extend({
-        tagName: 'section'
+    window.ProjectView = Backbone.View.extend({
+        model: Project
+        ,tagName: 'section'
         ,className: 'project focused'
         ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectName" contenteditable>{{=it.title}}</h1> <ul></ul> ')
         ,initialize: function () {
@@ -20,6 +23,8 @@ jQuery( function ( $ ) {
         ,events: {
             'keydown .jProjectName': 'titleKeydown'
             ,'blur .jProjectName': 'titleBlur'
+            ,'mousedown .jMoveHandler': 'handlerMouseDown'
+            ,'mouseup .jMoveHandler': 'handlerMouseUp'
         }
         ,titleKeydown: function ( ev ) {
             var $elv = $( this.el )
@@ -32,9 +37,36 @@ jQuery( function ( $ ) {
         ,titleBlur: function ( ev ) {
             this.model.set({'title': $( ev.currentTarget ).text()});
         }
+        ,handlerMouseDown: function ( ev ) {
+            var _offset = $( this.el ).offset();
+            _mo = {
+                $el: $( this.el )
+                ,offsetX: ev.pageX - _offset.left
+                ,offsetY: ev.pageY - _offset.top
+            };
+        }
+        ,handlerMouseUp: function ( ev ) {
+            _mo = void 0;
+        }
+        ,moving: false
+    });
+    $(document).on('mousemove', function ( ev ) {
+        if (!_mo) {
+            return;
+        }
+        _mo.$el.css({
+            left: ev.pageX - _mo.offsetX
+            ,top: ev.pageY - _mo.offsetY
+        });
     });
 
-    new VList({model: new MList()});
+    $('html').on('click', function ( ev ) {
+        if (/html/i.test( ev.target.tagName )) {
+            console.log('hello');
+        }
+    });
+
+    new ProjectView({model: new Project()});
     //$('.project:eq(0)').clone().addClass('focused').appendTo('body');
     $('.project:eq(1)').css({ left: '700px' })
     .on('focus', '.jProjectName', function ( ev ) {
