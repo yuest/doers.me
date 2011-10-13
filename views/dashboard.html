@@ -46,21 +46,30 @@
                     <span contenteditable>Ta</span>
                 </div>
             </li>
-            <li>Task 2</li>
             <li>
                 <ul>
-                    <li>subtask 1</li>
-                    <li>subtask 2</li>
                     <li>
-                        <ul>
-                            <li>subsubtask 1</li>
-                            <li>subsubtask 2</li>
-                        </ul>
+                        <u></u> <i></i> <s></s>
+                        <div class="text">
+                            <span contenteditable>Ta</span>
+                        </div>
+                    </li>
+                    <li>
+                        <u></u> <i></i> <s></s>
+                        <div class="text">
+                            <span contenteditable>Ta</span>
+                        </div>
                     </li>
                 </ul>
             </li>
         </ul>
     </section>
+    <script type="text/template" id="tpList">
+        <div class="move-handler jMoveHandler"></div>
+        <h1 class="jProjectName" contenteditable>{{=it.title}}</h1>
+        <ul></ul>
+    </script>
+    <script src="/js/doT.js"></script>
     <script src="/js/jquery.js"></script>
     <script src="/js/underscore.js"></script>
     <script src="/js/backbone.js"></script>
