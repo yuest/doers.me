@@ -12,6 +12,25 @@ jQuery( function ( $ ) {
         ,initialize: function () {
             $( this.el ).html( this.template( this.model.toJSON())).appendTo('body');
             this.$('.jProjectName').trigger('focus');
+            this.model.bind('change:title', function( a, b ) {
+                console.log( a.changedAttributes() );
+                console.log( this );
+            }, this);
+        }
+        ,events: {
+            'keydown .jProjectName': 'titleKeydown'
+            ,'blur .jProjectName': 'titleBlur'
+        }
+        ,titleKeydown: function ( ev ) {
+            var $elv = $( this.el )
+                ,$el = $( ev.currentTarget )
+                ;
+            if (_.indexOf([13,27], ev.keyCode) != -1) {
+                $el.trigger('blur');
+            };
+        }
+        ,titleBlur: function ( ev ) {
+            this.model.set({'title': $( ev.currentTarget ).text()});
         }
     });
 
@@ -23,9 +42,6 @@ jQuery( function ( $ ) {
         console.log( $el );
     })
     .on('keydown', '.jProjectName', function ( ev ) {
-        if ( ev.keyCode == 13 ) {
-            $( this ).trigger('blur');
-        };
     })
     .on('blur', '.jProjectName', function ( ev ) {
         var $el = $( this );
