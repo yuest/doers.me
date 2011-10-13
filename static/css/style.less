@@ -102,6 +102,9 @@ body {
     font-size: 12px;
     font-family: tahoma, arial, sans;
 }
+.hide {
+    display: none;
+}
 
 .roundedCorners (@radius: 12px) {
     -moz-border-radius: @radius;
@@ -118,9 +121,30 @@ body {
     padding: 3px;
     color: #fff;
     min-width: 200px;
+    padding-top: 32px;
     h1 {
         font-size: 16px;
-        line-height: 2em;
+        line-height: 1em;
+        position: absolute;
+        top: 0;
+        left: 3px;
+        padding: 4px 0;
+        margin: 4px 0;
+        max-width: 60%;
+
+        white-space: nowrap;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+
+        &:focus {
+            outline: 0 none;
+            background-color: #a34747;
+            max-width: none;
+            overflow: visible;
+            -o-text-overflow: visible;
+            text-overflow: visible;
+        }
     }
     ul {
         list-style: none;
@@ -194,6 +218,17 @@ body {
         &:hover {
             background-position: 0 -60px;
         }
+    }
+    input.h1text {
+        padding: 7px 0;
+        margin: 0;
+        border: 0 none;
+        background-color: #933;
+        outline: 0 none;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 1em;
     }
 }
 

@@ -69,34 +69,33 @@ console.log('Server started.');
 urlRules.add({
     '/': function ( req, res, next ) {
         res.renderHtml('./views/dashboard.html');
-        /*
-        M('post').find({ tag: 'trivial' }, { _id:1, author:1, topic:1, content:1 }, 0, 20).toArray( function ( err, topics ) {
-            res.renderHtml('./views/index.html', { topics: topics });
-        });
-        */
     }
     ,'/post/new': switchman.addSlash
-    ,'/post/new/': {
+    ,'/api/lists': {
         'GET': function ( req, res, next ) {
-            res.renderHtml('./views/post-new.html' );
+            M('list').find().toArray( function ( err, topics ) {
+                res.json().ok( JSON.stringify({ items: topics }));
+            });
         }
         ,'POST': function ( req, res, next ) {
             var reqBody = U.extend( {}, req.body );
-            reqBody.tag = 'trivial';
-            if (req.session.user) {
-                reqBody.author = req.session.user.username;
-            }
-            M('post').p( 'insertOne', reqBody ).then( function ( docs ) {
-                console.log( docs );
-                res.redirect('/post/' + docs[0]._id + '/');
+            M('list').p( 'insertOne', reqBody ).then( function ( docs ) {
+                res.json().ok( JSON.stringify( docs ));
             });
         }
     }
-    ,'GET /post/:id': switchman.addSlash
-    ,'GET /post/:id/': function ( req, res, next, id ) {
-        M('post').findOne({ _id: parseInt( id )}, function ( err, doc ) {
-            res.html().ok( JSON.stringify( doc ));
-        });
+    ,'/api/lists/:listId': {
+        'PUT': function ( req, res, next, listId ) {
+            var reqBody = U.extend( {}, req.body );
+            M('list').p( 'upsert', { id: listId }, reqBody ).then( function ( docs ) {
+                res.json().ok( JSON.stringify( docs ));
+            });
+        }
+        ,'DELETE': function ( req, res, next, listId ) {
+            M('list').p( 'remove', { _id: listId }).then( function ( docs ) {
+                res.json().ok();
+            });
+        }
     }
 });
 

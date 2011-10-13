@@ -13,6 +13,9 @@ body {
   font-size: 12px;
   font-family: tahoma, arial, sans;
 }
+.hide {
+  display: none;
+}
 .project {
   position: absolute;
   top: 100px;
@@ -24,10 +27,29 @@ body {
   padding: 3px;
   color: #fff;
   min-width: 200px;
+  padding-top: 32px;
 }
 .project h1 {
   font-size: 16px;
-  line-height: 2em;
+  line-height: 1em;
+  position: absolute;
+  top: 0;
+  left: 3px;
+  padding: 4px 0;
+  margin: 4px 0;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+}
+.project h1:focus {
+  outline: 0 none;
+  background-color: #a34747;
+  max-width: none;
+  overflow: visible;
+  -o-text-overflow: visible;
+  text-overflow: visible;
 }
 .project ul {
   list-style: none;
@@ -98,4 +120,15 @@ body {
 }
 .project.focused u:hover {
   background-position: 0 -60px;
+}
+.project.focused input.h1text {
+  padding: 7px 0;
+  margin: 0;
+  border: 0 none;
+  background-color: #933;
+  outline: 0 none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1em;
 }
