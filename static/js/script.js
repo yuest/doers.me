@@ -10,7 +10,7 @@ jQuery( function ( $ ) {
         }
     });
 
-    window.TaskList = Backbone.Model.extend({
+    window.TaskList = Backbone.Collection.extend({
         model: Task
         ,comparator: function ( task ) {
             return task.get('position');
@@ -26,6 +26,7 @@ jQuery( function ( $ ) {
             $elv.html( this.template( this.model.toJSON())).appendTo( $('>ul', this.model.get('parent').el ));
             console.log( this.$('.jTaskTitle'));
             this.$('.jTaskTitle').trigger('focus');
+            this.model.view = this;
         }
     });
 
@@ -47,6 +48,7 @@ jQuery( function ( $ ) {
                 console.log( a.changedAttributes() );
                 console.log( this );
             }, this);
+            this.model.view = this;
         }
         ,events: {
             'keydown .jProjectTitle': 'titleKeydown'

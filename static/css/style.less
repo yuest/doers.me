@@ -189,7 +189,7 @@ body {
     s, b, i, u {
         display: block;
         overflow: hidden;
-        background: url(/i/sprites.png) no-repeat 0 2px;
+        background: url(/i/sprites.png) no-repeat 0 -28px;
         height: 24px;
         width: 18px;
     }
@@ -198,21 +198,21 @@ body {
         margin: 0 4px;
         cursor: pointer;
         &.done {
-            background-position: 0 -88px;
+            background-position: -90px -28px;
         }
         &:hover {
-            background-position: 0 -118px;
+            background-position: -120px -28px;
         }
     }
     i {
         width: 16px;
         float: right;
         cursor: move;
-        background-position: -2px -240px;
+        background-position: -2px -90px;
         &.active,
         &.hover,
         &:hover {
-            background-position: -2px -270px;
+            background-position: -32px -90px;
         }
     }
     s {
@@ -220,12 +220,12 @@ body {
         top: 0;
         right: 24px;
         cursor: pointer;
-        background-position: 0 -150px;
+        background-position: 0 -60px;
         &.selected {
-            background-position: 0 -210px;
+            background-position: -60px -60px;
         }
         &:hover {
-            background-position: 0 -180px;
+            background-position: -30px -60px;
         }
     }
 }
@@ -242,10 +242,10 @@ body {
     u {
         &.done,
         &:hover {
-            background-position: 0 -28px;
+            background-position: -30px -28px;
         }
         &:hover {
-            background-position: 0 -58px;
+            background-position: -60px -28px;
         }
     }
     input.h1text {
