@@ -157,9 +157,18 @@ body {
         position: relative;
         .roundedCorners(3px);
         li {
-            padding: 3px 0 3px 3px;
-            line-height: 1.8em;
+            line-height: 24px;
             border-bottom: #d8ccb2 1px dashed;
+            position: relative;
+            .text {
+                overflow: hidden;
+                span {
+                    min-height: 24px;
+                    &:focus {
+                        outline: 0 none;
+                    }
+                }
+            }
         }
         ul li:last-child {
             border-bottom: 0 none;
@@ -175,31 +184,43 @@ body {
     s, b, i, u {
         display: block;
         overflow: hidden;
-        background: url(/i/sprites.png) no-repeat 0 0;
-        height: 30px;
-        width: 30px;
+        background: url(/i/sprites.png) no-repeat 0 2px;
+        height: 24px;
+        width: 18px;
     }
     u {
+        float: left;
+        margin: 0 4px;
         cursor: pointer;
-        &.done,
-        &:hover {
-            background-position: 0 -90px;
+        &.done {
+            background-position: 0 -88px;
         }
         &:hover {
-            background-position: 0 -120px;
-        }
-    }
-    s {
-        cursor: pointer;
-        background-position: 0 -150px;
-        &.selected {
-            background-position: 0 -180px;
+            background-position: 0 -118px;
         }
     }
     i {
-        background-position: 0 -210px;
-        &.active {
-            background-position: 0 -240px;
+        width: 16px;
+        float: right;
+        cursor: move;
+        background-position: -2px -240px;
+        &.active,
+        &.hover,
+        &:hover {
+            background-position: -2px -270px;
+        }
+    }
+    s {
+        float: right;
+        top: 0;
+        right: 24px;
+        cursor: pointer;
+        background-position: 0 -150px;
+        &.selected {
+            background-position: 0 -210px;
+        }
+        &:hover {
+            background-position: 0 -180px;
         }
     }
 }
@@ -216,10 +237,10 @@ body {
     u {
         &.done,
         &:hover {
-            background-position: 0 -30px;
+            background-position: 0 -28px;
         }
         &:hover {
-            background-position: 0 -60px;
+            background-position: 0 -58px;
         }
     }
     input.h1text {

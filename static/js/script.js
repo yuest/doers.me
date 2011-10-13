@@ -15,5 +15,10 @@ jQuery( function ( $ ) {
     .on('blur', '.jProjectName', function ( ev ) {
         var $el = $( this );
         console.log( $el );
+    })
+    .on('keydown', 'span[contenteditable]', function ( ev ) {
+        if (ev.keyCode == 8 && !$(this).text().length) {
+            return false;
+        };
     });
 });

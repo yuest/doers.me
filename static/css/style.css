@@ -65,9 +65,18 @@ body {
   border-radius: 3px;
 }
 .project ul li {
-  padding: 3px 0 3px 3px;
-  line-height: 1.8em;
+  line-height: 24px;
   border-bottom: #d8ccb2 1px dashed;
+  position: relative;
+}
+.project ul li .text {
+  overflow: hidden;
+}
+.project ul li .text span {
+  min-height: 24px;
+}
+.project ul li .text span:focus {
+  outline: 0 none;
 }
 .project ul ul li:last-child {
   border-bottom: 0 none;
@@ -82,31 +91,42 @@ body {
 .project ul li u {
   display: block;
   overflow: hidden;
-  background: url(/i/sprites.png) no-repeat 0 0;
-  height: 30px;
-  width: 30px;
+  background: url(/i/sprites.png) no-repeat 0 2px;
+  height: 24px;
+  width: 18px;
 }
 .project ul li u {
+  float: left;
+  margin: 0 4px;
   cursor: pointer;
 }
-.project ul li u.done, .project ul li u:hover {
-  background-position: 0 -90px;
+.project ul li u.done {
+  background-position: 0 -88px;
 }
 .project ul li u:hover {
-  background-position: 0 -120px;
+  background-position: 0 -118px;
+}
+.project ul li i {
+  width: 16px;
+  float: right;
+  cursor: move;
+  background-position: -2px -240px;
+}
+.project ul li i.active, .project ul li i.hover, .project ul li i:hover {
+  background-position: -2px -270px;
 }
 .project ul li s {
+  float: right;
+  top: 0;
+  right: 24px;
   cursor: pointer;
   background-position: 0 -150px;
 }
 .project ul li s.selected {
-  background-position: 0 -180px;
-}
-.project ul li i {
   background-position: 0 -210px;
 }
-.project ul li i.active {
-  background-position: 0 -240px;
+.project ul li s:hover {
+  background-position: 0 -180px;
 }
 .project.focused {
   left: 400px;
@@ -119,10 +139,10 @@ body {
   border-bottom: #933 1px dashed;
 }
 .project.focused u.done, .project.focused u:hover {
-  background-position: 0 -30px;
+  background-position: 0 -28px;
 }
 .project.focused u:hover {
-  background-position: 0 -60px;
+  background-position: 0 -58px;
 }
 .project.focused input.h1text {
   padding: 7px 0;
