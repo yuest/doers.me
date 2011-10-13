@@ -27,17 +27,20 @@ body {
   padding: 3px;
   color: #fff;
   min-width: 200px;
-  padding-top: 32px;
+}
+.project .move-handler {
+  padding-top: 28px;
+  cursor: move;
 }
 .project h1 {
   font-size: 16px;
   line-height: 1em;
   position: absolute;
-  top: 0;
+  top: 4px;
   left: 3px;
   padding: 4px 0;
-  margin: 4px 0;
   max-width: 60%;
+  cursor: text;
   white-space: nowrap;
   overflow: hidden;
   -o-text-overflow: ellipsis;
