@@ -74,6 +74,10 @@ body {
   overflow: hidden;
 }
 .project ul li .text span {
+  padding: 0px 1px;
+  max-width: 60%;
+  min-width: 20%;
+  cursor: text;
   min-height: 24px;
 }
 .project ul li .text span:focus {

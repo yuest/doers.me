@@ -1,17 +1,38 @@
 jQuery( function ( $ ) {
     var _mo; //moving object, a view object
 
-    window.Project = Backbone.Model.extend({
+    window.Task = Backbone.Model.extend({
         defaults: {
-            title: ''
+            title: '<br>'
+            ,position: 0
+            ,parent: null
+            ,children: null
+        }
+    });
+
+    window.TaskList = Backbone.Model.extend({
+        model: Task
+        ,comparator: function ( task ) {
+            return task.get('position');
+        }
+    });
+
+    window.TaskView = Backbone.View.extend({
+        tagName: 'li'
+        ,template: doT.template(' <u></u> <i></i> <s></s> <div class="text"> <span class="jTaskTitle" contenteditable>{{=it.title}}</span> </div> ')
+        ,initialize: function ( options ) {
+            var $elv = $( this.el );
+            console.log( this.model );
+            $elv.html( this.template( this.model.toJSON())).appendTo( $('>ul', this.model.get('parent').el ));
+            console.log( this.$('.jTaskTitle'));
+            this.$('.jTaskTitle').trigger('focus');
         }
     });
 
     window.ProjectView = Backbone.View.extend({
-        model: Project
-        ,tagName: 'section'
+        tagName: 'section'
         ,className: 'project focused'
-        ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectName" contenteditable>{{=it.title}}</h1> <ul></ul> ')
+        ,template: doT.template(' <div class="move-handler jMoveHandler"></div> <h1 class="jProjectTitle" contenteditable>{{=it.title}}</h1> <ul></ul> ')
         ,initialize: function ( options, left, top ) {
             var $elv = $( this.el );
             if (left) {
@@ -21,17 +42,18 @@ jQuery( function ( $ ) {
                 $elv.css('top', top+'px');
             }
             $elv.html( this.template( this.model.toJSON())).appendTo('body');
-            this.$('.jProjectName').trigger('focus');
+            this.$('.jProjectTitle').trigger('focus');
             this.model.bind('change:title', function( a, b ) {
                 console.log( a.changedAttributes() );
                 console.log( this );
             }, this);
         }
         ,events: {
-            'keydown .jProjectName': 'titleKeydown'
-            ,'blur .jProjectName': 'titleBlur'
+            'keydown .jProjectTitle': 'titleKeydown'
+            ,'blur .jProjectTitle': 'titleBlur'
             ,'mousedown .jMoveHandler': 'handlerMouseDown'
             ,'mouseup .jMoveHandler': 'handlerMouseUp'
+            ,'click ul': 'newTask'
         }
         ,titleKeydown: function ( ev ) {
             var $elv = $( this.el )
@@ -42,7 +64,7 @@ jQuery( function ( $ ) {
             };
         }
         ,titleBlur: function ( ev ) {
-            if (!this.$('.jProjectName').text().length) {
+            if (!this.$('.jProjectTitle').text().length) {
                 this.remove();
                 return false;
             }
@@ -60,6 +82,12 @@ jQuery( function ( $ ) {
             _mo = void 0;
         }
         ,moving: false
+        ,newTask: function ( ev ) {
+            var $elv = $( this.el );
+            if ($( ev.target ).parent().is( $elv )) {
+                new TaskView({ model: new Task({ parent: this }) });
+            }
+        }
     });
     $(document).on('mousemove', function ( ev ) {
         if (!_mo) {
@@ -73,19 +101,19 @@ jQuery( function ( $ ) {
 
     $(document).on('click', function ( ev ) {
         if (/html/i.test( ev.target.tagName )) {
-            new ProjectView({ model: new Project() }, ev.pageX-6, ev.pageY-8 );
+            new ProjectView({ model: new Task() }, ev.pageX-6, ev.pageY-8 );
         }
     });
 
     //$('.project:eq(0)').clone().addClass('focused').appendTo('body');
     $('.project:eq(1)').css({ left: '700px' })
-    .on('focus', '.jProjectName', function ( ev ) {
+    .on('focus', '.jProjectTitle', function ( ev ) {
         var $el = $( this );
         console.log( $el );
     })
-    .on('keydown', '.jProjectName', function ( ev ) {
+    .on('keydown', '.jProjectTitle', function ( ev ) {
     })
-    .on('blur', '.jProjectName', function ( ev ) {
+    .on('blur', '.jProjectTitle', function ( ev ) {
         var $el = $( this );
         console.log( $el );
     })
