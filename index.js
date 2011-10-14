@@ -7,6 +7,7 @@ var connect = require('connect')
     ,fs = require('fs')
     ,dot = require('dot')
     ,util = require('util')
+    ,https = require('https')
     ,urlRules = switchman()
     ,U = require('./lib/utils')
     ,S = require('./settings')
@@ -70,33 +71,15 @@ console.log('Server started.');
 
 urlRules.add({
     '/': function ( req, res, next ) {
-        res.renderHtml('./views/dashboard.html');
-    }
-    ,'/post/new': switchman.addSlash
-    ,'/api/lists': {
-        'GET': function ( req, res, next ) {
-            M('list').find().toArray( function ( err, topics ) {
-                res.json().ok( JSON.stringify({ items: topics }));
-            });
-        }
-        ,'POST': function ( req, res, next ) {
-            var reqBody = U.extend( {}, req.body );
-            M('list').p( 'insertOne', reqBody ).then( function ( docs ) {
-                res.json().ok( JSON.stringify( docs ));
-            });
-        }
-    }
-    ,'/api/lists/:listId': {
-        'PUT': function ( req, res, next, listId ) {
-            var reqBody = U.extend( {}, req.body );
-            M('list').p( 'upsert', { id: listId }, reqBody ).then( function ( docs ) {
-                res.json().ok( JSON.stringify( docs ));
-            });
-        }
-        ,'DELETE': function ( req, res, next, listId ) {
-            M('list').p( 'remove', { _id: listId }).then( function ( docs ) {
-                res.json().ok();
-            });
+        if (req.session.user) {
+            console.log( req.session.user );
+            res.renderHtml('./views/dashboard.html');
+        } else {
+            /*
+            res.renderHtml('./views/login.html');
+            */
+            req.session.user = { access_token: 'ya29.AHES6ZTUmQjFHt8ODMcoFMW9TriDhyM3ipjgOIHDTMs9Now' };
+            res.redirect('/');
         }
     }
 });
@@ -122,11 +105,72 @@ urlRules.add({
         });
         console.log( oauth2 );
         oauth2.accessToken(req.query.code, { redirect_url: S.google.redirectUrl }, function( statusCode, result ) {
-            res.text().ok( JSON.stringify({
-                status: statusCode,
-                result: result
-            }));
+            req.session.user = result;
+            res.redirect('/');
         });
+    }
+});
+
+function gtapi( reqStr, options, callback ) {
+    console.log( reqStr );
+    var split = reqStr.split(' ')
+        ,headers = {
+            'Authorization': 'Bearer '+options.access_token
+        }
+        ,reqOptions = {
+            host: 'www.googleapis.com'
+            ,port: 443
+            ,method: split[0]
+            ,path: split[1]
+            ,headers: headers
+        }
+        ;
+    if ( options.data ) {
+        options.body = new Buffer( options.data );
+        headers['content-type'] = 'application/json';
+        headers['content-length'] = options.body.length;
+    }
+    req = https.request( reqOptions, function ( res ) {
+        res.setEncoding('utf8');
+        var result = '';
+        res.on('data', function( data ) {
+            /*
+            console.log( data );
+            result = result + data;
+        });
+        res.on('end', function () {
+        */
+            var err = null;
+            try {
+                result = JSON.parse( data );
+            } catch( e ) {
+                err = e;
+                console.log( err );
+            }
+            console.log( result );
+
+            if( callback ) callback( err, result );
+        });
+    });
+    if (options.body) {
+        req.write( options.body );
+    }
+    req.end();
+}
+
+urlRules.add({
+    '/api': {
+        'GET /lists': function ( req, res, next ) {
+            gtapi('GET /tasks/v1/users/@me/lists?maxResults=100', { access_token: req.session.user.access_token }, function ( err, result ) {
+                res.json().ok( JSON.stringify( result ));
+            });
+        }
+        ,'GET /lists/:listId': function ( req, res, next, listId ) {
+            gtapi('DELETE /tasks/v1/users/@me/lists/'+listId, { access_token: req.session.user.access_token }, function ( err, result ) {
+                res.writeHead(204, 'No Content');
+                res.end();
+            });
+        }
     }
 });
 
