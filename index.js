@@ -3,7 +3,7 @@ var connect = require('connect')
     ,connectLess = require('connect-less')
     ,switchman = require('switchman')
     ,quip = require('quip')
-    ,everyauth = require('everyauth')
+    ,OAuth2 = require('oauth2').OAuth2
     ,fs = require('fs')
     ,dot = require('dot')
     ,util = require('util')
@@ -46,35 +46,6 @@ var T = (function () {
     };
 }());
 
-everyauth.everymodule.logoutPath('/signout');
-everyauth.everymodule.moduleTimeout(30000);
-
-everyauth.google
-    .entryPath('/auth/google')
-    .callbackPath('/auth/google/callback')
-    .appId('402025418712.apps.googleusercontent.com')
-    .appSecret('nEvNLEuLqTGo3h')
-    .scope('https://www.googleapis.com/auth/tasks') // What you want access to
-    //.handleAuthCallbackError( function (req, res) {
-        // If a user denies your app, Google will redirect the user to
-        // /auth/facebook/callback?error=access_denied
-        // This configurable route handler defines how you want to respond to
-        // that.
-        // If you do not configure this, everyauth renders a default fallback
-        // view notifying the user that their authentication failed and why.
-    //})
-    .findOrCreateUser( function (session, accessToken, accessTokenExtra, googleUserMetadata) {
-        console.log( session );
-        console.log( accessToken );
-        console.log( accessTokenExtra );
-        console.log( googleUserMetadata );
-        // find or create user logic goes here
-        // Return a user or Promise that promises a user
-        // Promises are created via
-        //     var promise = this.Promise();
-    })
-    .redirectPath('/');
-
 connect(
     quip()
     ,function ( req, res, next ) {
@@ -87,10 +58,10 @@ connect(
         };
         next();
     }
+    ,connect.query()
     ,connect.bodyParser()
     ,connect.cookieParser()
     ,connect.session({ secret: S.secret })
-    ,everyauth.middleware()
     ,connectLess({ src: __dirname + '/static'})
     ,connectStatic( __dirname + '/static' )
     ,urlRules
@@ -127,6 +98,35 @@ urlRules.add({
                 res.json().ok();
             });
         }
+    }
+});
+
+urlRules.add({
+    '/auth/google': function ( req, res, next ) {
+        res.redirect(
+            'https://accounts.google.com/o/oauth2/auth'
+                + '?client_id=' + S.google.clientId
+                + '&redirect_uri=' + S.google.redirectUrl
+                + '&scope=https://www.googleapis.com/auth/tasks'
+                + '&response_type=code'
+        );
+    }
+    ,'/auth/google/callback': function ( req, res, next ) {
+        console.log( req.query.code );
+        var oauth2 = new OAuth2({
+            base: "accounts.google.com",
+            tokenUrl: "/o/oauth2/token",
+            redirectUri: S.google.redirectUrl,
+            id: S.google.clientId,
+            secret: S.google.clientSecret
+        });
+        console.log( oauth2 );
+        oauth2.accessToken(req.query.code, { redirect_url: S.google.redirectUrl }, function(error, result) {
+            res.text().ok( JSON.stringify({
+                status: status,
+                result: result
+            }));
+        });
     }
 });
 
