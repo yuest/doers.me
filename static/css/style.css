@@ -114,11 +114,11 @@ body {
 .project ul li i {
   width: 16px;
   float: right;
-  cursor: move;
   background-position: -2px -90px;
 }
-.project ul li i.active, .project ul li i.hover, .project ul li i:hover {
+.project ul li i.hover {
   background-position: -32px -90px;
+  cursor: move;
 }
 .project ul li s {
   float: right;
@@ -148,15 +148,4 @@ body {
 }
 .project.focused u:hover {
   background-position: -60px -28px;
-}
-.project.focused input.h1text {
-  padding: 7px 0;
-  margin: 0;
-  border: 0 none;
-  background-color: #933;
-  outline: 0 none;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1em;
 }

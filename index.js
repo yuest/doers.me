@@ -78,7 +78,7 @@ urlRules.add({
             /*
             res.renderHtml('./views/login.html');
             */
-            req.session.user = { access_token: 'ya29.AHES6ZTUmQjFHt8ODMcoFMW9TriDhyM3ipjgOIHDTMs9Now' };
+            req.session.user = { access_token: 'ya29.AHES6ZTnj4F0iSHkMAAWiiT_TuPFEKwXhgKYyljTAgC7xx4' };
             res.redirect('/');
         }
     }
@@ -127,8 +127,8 @@ function gtapi( reqStr, options, callback ) {
         ;
     if ( options.data ) {
         options.body = new Buffer( options.data );
-        headers['content-type'] = 'application/json';
-        headers['content-length'] = options.body.length;
+        headers['Content-Type'] = 'application/json';
+        headers['Content-Length'] = options.body.length;
     }
     req = https.request( reqOptions, function ( res ) {
         res.setEncoding('utf8');
@@ -165,10 +165,24 @@ urlRules.add({
                 res.json().ok( JSON.stringify( result ));
             });
         }
-        ,'GET /lists/:listId': function ( req, res, next, listId ) {
+        ,'DELETE /lists/:listId': function ( req, res, next, listId ) {
             gtapi('DELETE /tasks/v1/users/@me/lists/'+listId, { access_token: req.session.user.access_token }, function ( err, result ) {
                 res.writeHead(204, 'No Content');
                 res.end();
+            });
+        }
+        ,'POST /lists': function ( req, res, next ) {
+            var options = { access_token: req.session.user.access_token };
+            options.data = JSON.stringify( req.body );
+            gtapi('POST /tasks/v1/users/@me/lists', options, function ( err, result ) {
+                res.json().ok( JSON.stringify( result ));
+            });
+        }
+        ,'PUT /lists/:listId': function ( req, res, next, listId ) {
+            var options = { access_token: req.session.user.access_token };
+            options.data = JSON.stringify( req.body );
+            gtapi('PUT /tasks/v1/users/@me/lists/'+listId, options, function ( err, result ) {
+                res.json().ok( JSON.stringify( result ));
             });
         }
     }

@@ -11,7 +11,7 @@ jQuery( function ( $ ) {
         ,initialize: function ( attributes, options ) {
             var viewType = this.viewType = options && options.viewType || 'task';
             if (viewType == 'task') {
-                this.view = new TaskView({ model: this }, true);
+                this.view = new TaskView({ model: this });
             } else if (viewType == 'project') {
                 this.view = new ProjectView({ model: this }, options.left, options.top);
             }
@@ -21,13 +21,71 @@ jQuery( function ( $ ) {
     window.TaskView = Backbone.View.extend({
         tagName: 'li'
         ,template: doT.template(' <u></u> <i></i> <s></s> <div class="text"> <span class="jTaskTitle" contenteditable>{{=it.title}}</span> </div> ')
-        ,initialize: function ( options, autoFocus ) {
+        ,initialize: function ( options ) {
             this.model.view = this;
             var $elv = $( this.el );
+            $elv.data({ view: this, model: this.model });
             $elv.html( this.template( this.model.toJSON()));
-            if (autoFocus) {
-                this.$('.jTaskTitle').trigger('focus');
+        }
+        ,events: {
+            'keydown .jTaskTitle': 'titleKeydown'
+            ,'blur .jTaskTitle': 'titleBlur'
+            ,'click s': 'select'
+            ,'mouseenter i': 'mouseenter'
+            ,'mouseleave i': 'mouseleave'
+        }
+        ,titleKeydown: function ( ev ) {
+            var $elv = $( this.el )
+                ,$el = $( ev.currentTarget )
+                ,children
+                ;
+            if (ev.keyCode == 27) {
+                $el.trigger('blur');
+            } else if (ev.keyCode == 13) {
+                $el.trigger('blur');
+                this.model.collection.add( new Task );
+                return false;
+            } else if (ev.keyCode == 9) {
+                if (!$elv.prev().length) {
+                    return false;
+                }
+                children = this.model.get('children');
+                if (!children) {
+                    this.model.set({ children: (children = new TaskList( null, null, this.model ))});
+                    children.add( new Task );
+                }
             }
+        }
+        ,titleBlur: function ( ev ) {
+            if (!this.$('.jTaskTitle').text().length) {
+                this.remove();
+                return false;
+            }
+            this.model.set({'title': $( ev.currentTarget ).text()});
+            console.log( this.model.attributes );
+        }
+        ,select: function ( ev ) {
+            $( ev.currentTarget ).toggleClass('selected');
+        }
+        ,mouseenter : function ( ev ) {
+            var topTask = this.model
+                ,$selected
+                ;
+            while ( topTask.collection && topTask.collection.parent ) {
+                topTask = topTask.collection.parent;
+            }
+            $selected = topTask.view.$('.selected') .map( function ( i, el ) {
+                    return $( el ).prev()[0];
+                })
+                .add( ev.currentTarget )
+
+            if ( $selected.length > 1 && !$( ev.currentTarget ).next().hasClass('selected') ) {
+                return false;
+            }
+            $selected.addClass('hover');
+        }
+        ,mouseleave : function ( ev ) {
+            $('i').removeClass('hover');
         }
     });
 
@@ -74,6 +132,7 @@ jQuery( function ( $ ) {
                 return false;
             }
             this.model.set({'title': $( ev.currentTarget ).text()});
+            console.log( this.model.attributes );
         }
         ,handlerMouseDown: function ( ev ) {
             var _offset = $( this.el ).offset();
@@ -111,6 +170,9 @@ jQuery( function ( $ ) {
                         model.view = new TaskView({ model: model });
                     }
                     $( model.view.el ).appendTo( this.view.el );
+                    if (this.length > 1) {
+                        model.view.$('.jTaskTitle').trigger('focus');
+                    }
                 }
             });
         }
