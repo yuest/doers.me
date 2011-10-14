@@ -121,9 +121,9 @@ urlRules.add({
             secret: S.google.clientSecret
         });
         console.log( oauth2 );
-        oauth2.accessToken(req.query.code, { redirect_url: S.google.redirectUrl }, function(error, result) {
+        oauth2.accessToken(req.query.code, { redirect_url: S.google.redirectUrl }, function( statusCode, result ) {
             res.text().ok( JSON.stringify({
-                status: status,
+                status: statusCode,
                 result: result
             }));
         });
