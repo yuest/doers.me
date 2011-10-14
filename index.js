@@ -65,7 +65,7 @@ connect(
     ,connectLess({ src: __dirname + '/static'})
     ,connectStatic( __dirname + '/static' )
     ,urlRules
-).listen(10086);
+).listen( S.serverPort );
 console.log('Server started.');
 
 urlRules.add({

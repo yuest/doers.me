@@ -5,9 +5,11 @@ exports.google = {
     ,clientSecret: 'nEvNLEuLqTGo3h_MnhsMYlon'
     ,redirectUrl: 'http://doers.me/auth/google/callback'
 };
+exports.serverPort = 80;
 
-// 生产环境配置
+// 开发环境配置
 if (process.env.NODE_ENV != 'production') {
     exports.debug = true;
     exports.google.redirectUrl = 'http://localhost:10086/auth/google/callback';
+    exports.serverPort = 10086;
 }
