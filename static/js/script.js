@@ -5,8 +5,6 @@ jQuery( function ( $ ) {
         defaults: {
             title: '<br>'
             ,position: 0
-            ,parent: null
-            ,children: null
         }
         ,initialize: function ( attributes, options ) {
             var viewType = this.viewType = options && options.viewType || 'task';
@@ -39,33 +37,47 @@ jQuery( function ( $ ) {
                 ,$el = $( ev.currentTarget )
                 ,children
                 ;
+            console.log( ev );
             if (ev.keyCode == 27) {
                 $el.trigger('blur');
             } else if (ev.keyCode == 13) {
                 $el.trigger('blur');
-                this.model.collection.add( new Task );
+                $el.closest('ul').data('collection').add( new Task );
                 return false;
             } else if (ev.keyCode == 9) {
-                if (!$elv.prev().length) {
+                var modelOrCollection = $elv.prev().data('model') || $elv.prev().data('collection'), children;
+                if (!modelOrCollection) {
                     return false;
                 }
-                children = this.model.get('children');
-                if (!children) {
-                    this.model.set({ children: (children = new TaskList( null, null, this.model ))});
-                    children.add( new Task );
+                if ( modelOrCollection instanceof TaskList ) {
+                    modelOrCollection.add( this.model );
+                    ev.preventDefault();
+                    return false;
+                } else {
+                    modelOrCollection.children = new TaskList( null, null, modelOrCollection );
+                    modelOrCollection.children.add( this.model );
+                    ev.preventDefault();
+                    return false;
                 }
             }
         }
         ,titleBlur: function ( ev ) {
-            if (!this.$('.jTaskTitle').text().length) {
+            if (!this.$('.jTaskTitle').text().length && this.model.collection.length > 1) {
                 this.remove();
                 return false;
             }
             this.model.set({'title': $( ev.currentTarget ).text()});
-            console.log( this.model.attributes );
         }
         ,select: function ( ev ) {
-            $( ev.currentTarget ).toggleClass('selected');
+            var $el = $( ev.currentTarget );
+            $el.toggleClass('selected');
+            if (this.model.children) {
+                if ($el.hasClass('selected')) {
+                    $el.closest('li').next('ul').find('s').addClass('selected');
+                } else {
+                    $el.closest('li').next('ul').find('s').removeClass('selected');
+                }
+            }
         }
         ,mouseenter : function ( ev ) {
             var topTask = this.model
@@ -105,10 +117,9 @@ jQuery( function ( $ ) {
             $elv.html( this.template( this.model.toJSON())).appendTo('body');
             this.$('.jProjectTitle').trigger('focus');
 
-            var children = this.model.get('children');
-            if (!children) {
-                this.model.set({ children: (children = new TaskList( null, null, this.model ))});
-                children.add( new Task );
+            if (!this.model.children) {
+                this.model.children = new TaskList( null, null, this.model );
+                this.model.children.add( new Task );
             }
         }
         ,events: {
@@ -132,7 +143,6 @@ jQuery( function ( $ ) {
                 return false;
             }
             this.model.set({'title': $( ev.currentTarget ).text()});
-            console.log( this.model.attributes );
         }
         ,handlerMouseDown: function ( ev ) {
             var _offset = $( this.el ).offset();
@@ -181,12 +191,14 @@ jQuery( function ( $ ) {
     window.TaskListView = Backbone.View.extend({
         tagName: 'ul'
         ,initialize: function ( options, parent ) {
+            var $elv = $( this.el );
             this.collection.view = this;
+            $elv.data({ view: this, collection: this.collection });
             if (this.collection.parent) {
                 if (this.collection.parent.viewType == 'project') {
-                    $( this.el ).appendTo( parent.view.el );
+                    $elv.appendTo( parent.view.el );
                 } else if (this.collection.parent.viewType == 'task') {
-                    $( this.el ).after( parent.view.el );
+                    $elv.insertAfter( parent.view.el );
                 }
             }
         }

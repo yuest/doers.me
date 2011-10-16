@@ -16,6 +16,14 @@ body {
 .hide {
   display: none;
 }
+#logo {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  width: 200px;
+  height: 30px;
+  background: url(/i/sprites.png) no-repeat 0 0;
+}
 .project {
   position: absolute;
   top: 100px;
@@ -82,9 +90,6 @@ body {
 }
 .project ul li .text span:focus {
   outline: 0 none;
-}
-.project ul ul li:last-child {
-  border-bottom: 0 none;
 }
 .project > ul {
   margin-left: 0;
