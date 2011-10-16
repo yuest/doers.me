@@ -1,5 +1,12 @@
 jQuery( function ( $ ) {
     var _mo; //moving object, a view object
+    var focusProjectView = (function () {
+        var topz = 10000;
+        return function ( prejectView ) {
+            $('body>section').removeClass('focused');
+            $( prejectView.el ).addClass('focused').css({ 'z-index': ++topz });
+        };
+    }())
 
     window.Task = Backbone.Model.extend({
         defaults: {
@@ -12,6 +19,10 @@ jQuery( function ( $ ) {
                 this.view = new TaskView({ model: this });
             } else if (viewType == 'project') {
                 this.view = new ProjectView({ model: this }, options.left, options.top);
+                this.set({
+                    left: options.left
+                    ,top: options.top
+                }, { silent: true });
             }
         }
     });
@@ -114,8 +125,28 @@ jQuery( function ( $ ) {
             if (top) {
                 $elv.css('top', top+'px');
             }
+            $elv.data({
+                model: this.model
+                ,view: this
+            });
             $elv.html( this.template( this.model.toJSON())).appendTo('body');
             this.$('.jProjectTitle').trigger('focus');
+            focusProjectView( this );
+            /*
+            var self = this;
+            $( document ).click('click.'+self.model.cid, function ( ev ) {
+                console.log('click.'+self.model.cid);
+                console.log( $( ev.target ).parents().index( $elv ));
+                if ( $( ev.target ).parents().index( $elv ) == -1 ) {// > -1 说明点击的是该组件
+                    $( document ).unbind('click.'+self.model.cid);
+                    console.log('ickii');
+                    self.events['blur .jProjectTitle'] = 'titleBlur';
+                    self.delegateEvents();// 新建的 Project，要在点击 Project View 外一次才开始监听 blur .jProjectTitle
+                    console.log( self.titleBlur );
+                    self.$('.jProjectTitle').trigger('blur');
+                }
+            });
+            */
 
             if (!this.model.children) {
                 this.model.children = new TaskList( null, null, this.model );
@@ -128,6 +159,10 @@ jQuery( function ( $ ) {
             ,'mousedown .jMoveHandler': 'handlerMouseDown'
             ,'mouseup .jMoveHandler': 'handlerMouseUp'
             ,'click ul': 'newTask'
+            ,'mousedown': 'focusOnThis'
+        }
+        ,focusOnThis: function () {
+            focusProjectView( this );
         }
         ,titleKeydown: function ( ev ) {
             var $elv = $( this.el )
@@ -138,6 +173,7 @@ jQuery( function ( $ ) {
             };
         }
         ,titleBlur: function ( ev ) {
+            console.log('h');
             if (!this.$('.jProjectTitle').text().length) {
                 this.remove();
                 return false;
@@ -217,26 +253,6 @@ jQuery( function ( $ ) {
     $(document).on('click', function ( ev ) {
         if (/html/i.test( ev.target.tagName )) {
             new Task( null, { left: ev.pageX-6, top: ev.pageY-16, viewType: 'project'});
-        }
-    });
-
-    //$('.project:eq(0)').clone().addClass('focused').appendTo('body');
-    $('.project:eq(1)').css({ left: '700px' })
-    .on('focus', '.jProjectTitle', function ( ev ) {
-        var $el = $( this );
-    })
-    .on('keydown', '.jProjectTitle', function ( ev ) {
-    })
-    .on('blur', '.jProjectTitle', function ( ev ) {
-        var $el = $( this );
-    })
-    .on('keydown', 'span[contenteditable]', function ( ev ) {
-        var $el = $( this );
-        if (ev.keyCode == 8 && !$el.text().length && $el.height() <= 24) {
-            return false;
-        }
-        if (ev.keyCode == 27) {
-            $el.trigger('blur');
         }
     });
 });

@@ -150,9 +150,10 @@ body {
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
 
+        &:hover,
         &:focus {
             outline: 0 none;
-            background-color: #a34747;
+            background-color: #fff; // TODO: correct unfocused title hover bgcolor
             max-width: none;
             overflow: visible;
             -o-text-overflow: visible;
@@ -237,6 +238,12 @@ body {
 .project.focused {
     left: 400px;
     background-color: #933;
+    h1 {
+        &:hover,
+        &:focus {
+            background-color: #a34747;
+        }
+    }
     ul {
         color: #333;
         li {

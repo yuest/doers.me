@@ -55,9 +55,9 @@ body {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
 }
-.project h1:focus {
+.project h1:hover, .project h1:focus {
   outline: 0 none;
-  background-color: #a34747;
+  background-color: #fff;
   max-width: none;
   overflow: visible;
   -o-text-overflow: visible;
@@ -141,6 +141,9 @@ body {
 .project.focused {
   left: 400px;
   background-color: #933;
+}
+.project.focused h1:hover, .project.focused h1:focus {
+  background-color: #a34747;
 }
 .project.focused ul {
   color: #333;
