@@ -189,3 +189,18 @@ urlRules.add({
 });
 
 urlRules.add( require('./site/accout') );
+/*
+urlRules.add({
+    '/cache.manifest': function ( req, res, next ) {
+        res.headers({
+            'Content-Type': 'text/cache-manifest; charset=utf-8'
+          , 'Cache-Control': 'no-cache'
+        }).ok([
+            'CACHE MANIFEST'
+          , '#r6'
+          , 'NETWORK:'
+          , '*'
+        ].join('\n'));
+    }
+});
+*/

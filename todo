@@ -1,0 +1,7 @@
+unfocus title
+改善 Backbone.View 的 Events 绑定机制
+想一个 focusOutNewProject 的机制
+写一个 LocalStorage 储存数据
+把对于 DoersMe 自身的 Todo List 迁移到用 DoersMe 来完成
+用 require.js 重新组织代码
+把前后端分离，让后端以插件形式提供不同的技术支持方案——只要 API 一致，可能需要重写修正 API 设计

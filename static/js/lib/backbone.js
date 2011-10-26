@@ -1,4 +1,3 @@
-define( function ( require, exports, module ) {
 //     Backbone.js 0.5.3
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -1157,4 +1156,3 @@ define( function ( require, exports, module ) {
   };
 
 }).call(this);
-});

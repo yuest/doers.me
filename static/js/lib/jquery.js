@@ -1,4 +1,3 @@
-define( function ( require, exports, module ) {
 /*!
  * jQuery JavaScript Library v1.7b1
  * http://jquery.com/
@@ -9241,5 +9240,3 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 // Expose jQuery to the global object
 window.jQuery = window.$ = jQuery;
 })(window);
-module.exports = $.noConflict();
-});

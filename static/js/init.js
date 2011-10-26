@@ -1,3 +1,10 @@
+define( function( require, exports, module ) {
+var jQuery
+    ,underscore
+    ,$ = jQuery = require('jquery')
+    ,_ = underscore = require('underscore')
+    ,Backbone = require('backbone')
+    ;
 jQuery( function ( $ ) {
     var _mo; //moving object, a view object
     var focusProjectView = (function () {
@@ -173,12 +180,15 @@ jQuery( function ( $ ) {
             };
         }
         ,titleBlur: function ( ev ) {
-            console.log('h');
-            if (!this.$('.jProjectTitle').text().length) {
-                this.remove();
-                return false;
-            }
-            this.model.set({'title': $( ev.currentTarget ).text()});
+            var self = this;
+            setTimeout( function () {
+                if ($( self.el ).hasClass('focused')) return;
+                if (!self.$('.jProjectTitle').text().length) {
+                    self.remove();
+                    return false;
+                }
+                self.model.set({'title': $( ev.currentTarget ).text()});
+            }, 1);
         }
         ,handlerMouseDown: function ( ev ) {
             var _offset = $( this.el ).offset();
@@ -255,4 +265,5 @@ jQuery( function ( $ ) {
             new Task( null, { left: ev.pageX-6, top: ev.pageY-16, viewType: 'project'});
         }
     });
+});
 });
