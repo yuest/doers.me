@@ -4,6 +4,7 @@ var jQuery
     ,$ = jQuery = require('jquery')
     ,_ = underscore = require('underscore')
     ,Backbone = require('backbone')
+    ,doT = require('doT')
     ;
 jQuery( function ( $ ) {
     var _mo; //moving object, a view object
