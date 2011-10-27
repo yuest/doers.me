@@ -1,0 +1,1 @@
+define(["./jquery","./underscore","./backbone","./doT"],function(a,b,c){c.exports={jQuery:a("./jquery"),underscore:a("./underscore"),Backbone:a("./backbone"),doT:a("./doT")}});

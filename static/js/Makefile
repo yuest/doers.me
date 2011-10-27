@@ -1,11 +1,15 @@
-buildall: jquery.js underscore.js backbone.js doT.js
+allfiles = lib/jquery.js lib/underscore.js lib/backbone.js lib/doT.js
+buildall: $(allfiles)
 	#done build
 
-jquery.js: lib/jquery.js
-	 cat wrap/define_start lib/jquery.js wrap/define_end_for_jquery > jquery.js
-underscore.js: ../../node_modules/underscore/underscore.js
-	 cat wrap/define_start ../../node_modules/underscore/underscore.js wrap/define_end > underscore.js
-backbone.js: ../../node_modules/backbone/backbone.js
-	 cat wrap/define_start ../../node_modules/backbone/backbone.js wrap/define_end > backbone.js
-doT.js: ../../node_modules/dot/doT.js
-	 cat wrap/define_start ../../node_modules/dot/doT.js wrap/define_end > doT.js
+lib/jquery.js: lib/jquery.orig.js
+	 cat wrap/define_start lib/jquery.orig.js wrap/define_end_for_jquery > lib/jquery.js
+lib/underscore.js: ../../node_modules/underscore/underscore.js
+	 cat wrap/define_start ../../node_modules/underscore/underscore.js wrap/define_end > lib/underscore.js
+lib/backbone.js: ../../node_modules/backbone/backbone.js
+	 cat wrap/define_start ../../node_modules/backbone/backbone.js wrap/define_end > lib/backbone.js
+lib/doT.js: ../../node_modules/dot/doT.js
+	 cat wrap/define_start ../../node_modules/dot/doT.js wrap/define_end > lib/doT.js
+
+clean:
+	rm $(allfiles)

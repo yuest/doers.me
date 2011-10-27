@@ -1,4 +1,3 @@
-define( function ( require, exports, module ) {
 /*!
  * jQuery JavaScript Library v1.7b1
  * http://jquery.com/
@@ -1812,7 +1811,7 @@ jQuery.extend({
 
 				// Support space separated names
 				if ( jQuery.isArray( name ) ) {
-					name = name;
+					//name = name;
 				} else if ( name in thisCache ) {
 					name = [ name ];
 				} else {
@@ -9241,5 +9240,3 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 // Expose jQuery to the global object
 window.jQuery = window.$ = jQuery;
 })(window);
-module.exports = $.noConflict();
-});

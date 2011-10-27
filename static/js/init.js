@@ -1,10 +1,11 @@
 define( function( require, exports, module ) {
 var jQuery
     ,underscore
-    ,$ = jQuery = require('jquery')
-    ,_ = underscore = require('underscore')
-    ,Backbone = require('backbone')
-    ,doT = require('doT')
+    ,lib = require('./lib/index')
+    ,$ = jQuery = lib.jQuery
+    ,_ = underscore = lib.underscore
+    ,Backbone = lib.Backbone
+    ,doT = lib.doT
     ;
 jQuery( function ( $ ) {
     var _mo; //moving object, a view object
